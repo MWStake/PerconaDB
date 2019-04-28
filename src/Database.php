@@ -1,4 +1,4 @@
-<?php #-*-tab-width: 4; fill-column: 76; whitespace-line-column: 77; indent-tabs-mode: t -*-
+<?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
 # vi:shiftwidth=4 tabstop=4 textwidth=76
 
 /*
@@ -21,5 +21,7 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
-class Database {
+use Wikimedia\RDBMS\DatabaseMysqli;
+
+class Database extends DatabaseMysqli {
 }
