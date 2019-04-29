@@ -21,7 +21,31 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
+use Wikimedia\RDBMS\Database as BaseDB;
 use Wikimedia\RDBMS\DatabaseMysqli;
 
 class Database extends DatabaseMysqli {
+	public function lockIsFree( $lockName, $method ) {
+		return BaseDB::lockIsFree( $lockName, $method );
+	}
+
+	public function lock( $lockName, $method, $timeout = 5 ) {
+		return BaseDB::lock( $lockName, $method, $timeout );
+	}
+
+	public function unlock( $lockName, $method ) {
+		return BaseDB::unlock( $lockName, $method );
+	}
+
+	public function namedLocksEnqueue() {
+		return BaseDB::namedLocksEnqueue();
+	}
+
+	protected function doLockTables( array $read, array $write, $method ) {
+		return BaseDB::doLockTables( $read, $write, $method );
+	}
+
+	protected function doUnlockTables( $method ) {
+		return BaseDB::doUnlockTables( $method );
+	}
 }
