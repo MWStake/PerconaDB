@@ -1,0 +1,57 @@
+{
+	"name": "mediawiki/percona-db",
+	"type": "mediawiki-extension",
+	"description": "An extension that enables the percona DB",
+	"keywords": [
+		"mediawiki",
+        "percona",
+        "database"
+	],
+	"homepage": "https://www.mediawiki.org/wiki/Extension:PerconaDB",
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		{
+			"name": "Mark A. Hersbherger",
+			"role": "Creator"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/MWStake/PerconaDB/issues",
+		"source": "https://github.com/MWStake/PerconaDB"
+	},
+	"require": {
+		"php": ">=5.6",
+		"composer/installers": "1.*,>=1.0.1"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "~2.1",
+		"phpmd/phpmd": "~2.1"
+	},
+	"autoload": {
+		"files" : [
+			"PerconaInstaller.php",
+			"DatabasePercona.php"
+		],
+		"psr-4": {
+			"MediaWiki\\Extension\\PerconaDB\\": "src/"
+		}
+	},
+	"config": {
+		"process-timeout": 0
+	},
+	"scripts":{
+		"phpunit": "php ../../tests/phpunit/phpunit.php -c phpunit.xml.dist",
+		"test": "php ../../tests/phpunit/phpunit.php -c phpunit.xml.dist",
+		"unit": "composer phpunit -- --testsuite semantic-scribunto-unit",
+		"integration": "composer phpunit -- --testsuite semantic-scribunto-integration",
+		"cs": [
+			"vendor/bin/phpcs src/* tests/* --standard=phpcs.xml --extensions=php -sp",
+			"vendor/bin/phpmd src/,tests/ text phpmd.xml"
+		],
+		"ci": [
+			"composer validate --no-interaction",
+			"composer phpunit",
+			"composer cs"
+		]
+	}
+}
