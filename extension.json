@@ -14,7 +14,8 @@
 		"MediaWiki\\Extension\\PerconaDB\\": "src/"
 	},
 	"AutoloadClasses": {
-		"DatabasePercona": "DatabasePercona.php"
+		"DatabasePercona": "DatabasePercona.php",
+		"PerconaInstaller": "PerconaInstaller.php"
 	},
 	"MessagesDirs": {
 		"PerconaDB": [
