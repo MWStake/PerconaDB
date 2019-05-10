@@ -4,8 +4,8 @@
 	"description": "An extension that enables the percona DB",
 	"keywords": [
 		"mediawiki",
-        "percona",
-        "database"
+		"percona",
+		"database"
 	],
 	"homepage": "https://www.mediawiki.org/wiki/Extension:PerconaDB",
 	"license": "GPL-3.0-or-later",

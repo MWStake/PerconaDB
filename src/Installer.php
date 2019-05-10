@@ -21,8 +21,88 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
-use Wikimedia\RDBMS\Database as BaseDB;
 use MysqlInstaller;
+use Status;
+use Wikimedia\RDBMS\Database;
+use Wikimedia\RDBMS\DBConnectionError;
 
 class Installer extends MysqlInstaller {
+	public $supportedEngines = [ 'InnoDB' ];
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return 'percona';
+	}
+
+	/**
+	 * @return Status
+	 */
+	public function openConnection() {
+		$status = Status::newGood();
+		try {
+			$dbh = Database::factory(
+				'percona', [
+					'host' => $this->getVar( 'wgDBserver' ),
+					'user' => $this->getVar( '_InstallUser' ),
+					'password' => $this->getVar( '_InstallPassword' ),
+					'dbname' => false,
+					'flags' => 0,
+					'tablePrefix' => $this->getVar( 'wgDBprefix' )
+				]
+			);
+			$status->value = $dbh;
+		} catch ( DBConnectionError $e ) {
+			$status->fatal( 'config-connection-error', $e->getMessage() );
+		}
+
+		return $status;
+	}
+
+		/**
+	 * @return string
+	 */
+	public function getSettingsForm() {
+		if ( $this->canCreateAccounts() ) {
+			$noCreateMsg = false;
+		} else {
+			$noCreateMsg = 'config-db-web-no-create-privs';
+		}
+		$settingsForm = $this->getWebUserBox( $noCreateMsg );
+
+		// Do engine selector
+		$engines = $this->getEngines();
+		// If the current default engine is not supported, use an engine that is
+		if ( !in_array( $this->getVar( '_MysqlEngine' ), $engines ) ) {
+			$this->setVar( '_MysqlEngine', reset( $engines ) );
+		}
+
+		if ( count( $engines ) >= 2 ) {
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-mysql-innodb, config-mysql-myisam
+			$settingsForm .= $this->getRadioSet( [
+													'var' => '_MysqlEngine',
+													'label' => 'config-mysql-engine',
+													'itemLabelPrefix' => 'config-mysql-',
+													'values' => $engines,
+													'itemAttribs' => [
+														'InnoDB' => [
+															'class' => 'hideShowRadio',
+															'rel' => 'dbMyisamWarning'
+														]
+													]
+			] );
+			$settingsForm .= $this->parent->getHelpBox( 'config-mysql-engine-help' );
+		}
+
+		// If the current default charset is not supported, use a charset that is
+		$charsets = $this->getCharsets();
+		if ( !in_array( $this->getVar( '_MysqlCharset' ), $charsets ) ) {
+			$this->setVar( '_MysqlCharset', reset( $charsets ) );
+		}
+
+		return $settingsForm;
+	}
 }

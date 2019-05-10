@@ -15,7 +15,8 @@
 	},
 	"AutoloadClasses": {
 		"DatabasePercona": "DatabasePercona.php",
-		"PerconaInstaller": "PerconaInstaller.php"
+		"PerconaInstaller": "PerconaInstaller.php",
+		"PerconaUpdater": "PerconaUpdater.php"
 	},
 	"MessagesDirs": {
 		"PerconaDB": [
