@@ -48,4 +48,8 @@ class Database extends DatabaseMysqli {
 	protected function doUnlockTables( $method ) {
 		return BaseDB::doUnlockTables( $method );
 	}
+
+	protected function isInsertSelectSafe( array $insertOptions, array $selectOptions ) {
+		return BaseDB::isInsertSelectSafe( $insertOptions, $selectOptions );
+	}
 }
