@@ -13,6 +13,9 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\PerconaDB\\": "src/"
 	},
+	"Hooks": {
+		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\PerconaDB\\Hook"
+	},
 	"AutoloadClasses": {
 		"DatabasePercona": "DatabasePercona.php",
 		"PerconaInstaller": "PerconaInstaller.php",
