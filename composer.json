@@ -1,5 +1,8 @@
 {
 	"name": "mediawiki/percona-db",
+	"extra": {
+		"installer-name": "PerconaDB"
+	},
 	"type": "mediawiki-extension",
 	"description": "An extension that enables the percona DB",
 	"keywords": [
