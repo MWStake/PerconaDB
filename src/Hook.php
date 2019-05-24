@@ -27,6 +27,35 @@ class Hook {
 	static public function onLoadExtensionSchemaUpdates(
 		DatabaseUpdater $upd
 	) {
-		$upd->addExtensionUpdate( [ __CLASS__ . '::' ] );
+		$upd->addExtensionUpdate( [ __CLASS__ . '::ensurePrimaryKeys' ] );
+	}
+
+	/**
+	 * Return an array of tables without a primary key and the type of key
+	 * (UNI, MUL) used for each column.  This information is used later to
+	 * construct a primary key.
+	 *
+	 * @param Database $dbw
+	 * @param string $dbName
+	 * @return array[tableName][keyType][columnName]
+	 */
+	static public function getTablesWithoutPrimaryKeys(
+		Database $dbw, $dbName
+	) {
+		
+	}
+
+	static public function ensurePrimaryKeys(
+		DatabaseUpdater $upd
+	) {
+		$dbName = $upd->getDBName();
+		$dbw = $upd->getDatabase();
+		$tables = self::getTablesWithoutPrimaryKeys( $dbw, $dbName );
+		if ( count( $tables ) ) {
+			$upd->output( "Updating tables to have a primary key...\n" );
+			foreach ( array_keys( $tables ) as $table ) {
+				self::addPrimaryKey( $upd, $table, $tables );
+			}
+		}
 	}
 }
