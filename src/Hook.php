@@ -21,11 +21,12 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
+use DatabaseUpdater;
+
 class Hook {
 	static public function onLoadExtensionSchemaUpdates(
 		DatabaseUpdater $upd
 	) {
-		echo "yep, it invoked me $upd";
-		exit;
+		$upd->addExtensionUpdate( [ __CLASS__ . '::' ] );
 	}
 }
