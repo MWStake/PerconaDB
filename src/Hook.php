@@ -27,6 +27,7 @@ class Hook {
 	static public function onLoadExtensionSchemaUpdates(
 		DatabaseUpdater $upd
 	) {
+		$upd->addExtensionUpdate( [ __CLASS__ . '::ensureNoMyISAMTables' ] );
 		$upd->addExtensionUpdate( [ __CLASS__ . '::ensurePrimaryKeys' ] );
 	}
 
@@ -43,6 +44,33 @@ class Hook {
 		Database $dbw, $dbName
 	) {
 		
+	}
+
+	/**
+	 * Return a list of tables that use the MyISAM engine.
+	 *
+	 * @param Database $dbw
+	 * @param string $dbName
+	 * @return array[]
+	 */
+	static public function getMyISAMTables(
+		Database $dbw, $dbName
+	) {
+		
+	}
+
+	static public function ensureNoMyISAMTables(
+		DatabaseUpdater $upd
+	) {
+		$dbName = $upd->getDBName();
+		$dbw = $upd->getDatabase();
+		$tables = self::getMyISAMTables( $dbw, $dbName );
+		if ( count( $tables ) ) {
+			$upd->ouput( "Converting tables to InnoDB...\n" );
+			foreach ( $tables as $table ) {
+				self::convertToInnoDB( $dbw, $table );
+			}
+		}
 	}
 
 	static public function ensurePrimaryKeys(
