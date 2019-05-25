@@ -1,7 +1,7 @@
 <?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
 # vi:shiftwidth=4 tabstop=4 textwidth=76
 
-/*
+/**
  * Copyright (C) 2019  NicheWork, LLC
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,15 @@
 namespace MediaWiki\Extension\PerconaDB;
 
 use DatabaseUpdater;
+use Database;
 
 class Hook {
+	/**
+	 * Fired when MediaWiki is updated to allow extensions to update the database
+	 *
+	 * @param DatabaseUpdater $upd
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates
+	 */
 	static public function onLoadExtensionSchemaUpdates(
 		DatabaseUpdater $upd
 	) {
@@ -32,58 +39,72 @@ class Hook {
 	}
 
 	/**
-	 * Return an array of tables without a primary key and the type of key
-	 * (UNI, MUL) used for each column.  This information is used later to
-	 * construct a primary key.
+	 * Ensure that all tables have primary keys.
 	 *
-	 * @param Database $dbw
-	 * @param string $dbName
-	 * @return array[tableName][keyType][columnName]
+	 * @param DatabaseUpdater $upd
 	 */
-	static public function getTablesWithoutPrimaryKeys(
-		Database $dbw, $dbName
+	static public function ensurePrimaryKeys(
+		DatabaseUpdater $upd
 	) {
-		
+		$pkCreator = new PrimaryKeyCreator( $upd );
+		$pkCreator->execute();
+	}
+
+	/**
+	 * Ensure that there are no tables using MyISAM.
+	 *
+	 * @param DatabaseUpdater $upd
+	 */
+	static public function ensureNoMyISAMTables(
+		DatabaseUpdater $upd
+	) {
+		$dbw = $upd->getDB();
+		$tables = self::getMyISAMTables( $dbw );
+		if ( count( $tables ) ) {
+			$upd->output( "Converting tables to InnoDB...\n" );
+			foreach ( $tables as $table ) {
+				$upd->output( "...$table\n" );
+				self::convertToInnoDB( $dbw, $table );
+			}
+		}
 	}
 
 	/**
 	 * Return a list of tables that use the MyISAM engine.
 	 *
 	 * @param Database $dbw
-	 * @param string $dbName
 	 * @return array[]
 	 */
 	static public function getMyISAMTables(
-		Database $dbw, $dbName
+		Database $dbw
 	) {
-		
-	}
+		$dbName = $dbw->addQuotes( $dbw->getDBName() );
 
-	static public function ensureNoMyISAMTables(
-		DatabaseUpdater $upd
-	) {
-		$dbName = $upd->getDBName();
-		$dbw = $upd->getDatabase();
-		$tables = self::getMyISAMTables( $dbw, $dbName );
-		if ( count( $tables ) ) {
-			$upd->ouput( "Converting tables to InnoDB...\n" );
-			foreach ( $tables as $table ) {
-				self::convertToInnoDB( $dbw, $table );
+		$ret = [];
+		$res = $dbw->query(
+			"SELECT table_name
+               FROM information_schema.tables
+              WHERE engine='MyISAM'
+                AND table_schema=$dbName"
+		);
+		if ( $res->numRows() ) {
+			foreach ( $res as $row ) {
+				$ret[] = $dbw->addIdentifierQuotes( $row->table_name );
 			}
 		}
+		return $ret;
 	}
 
-	static public function ensurePrimaryKeys(
-		DatabaseUpdater $upd
+	/**
+	 * Convert a table to use the InnoDB engine.
+	 *
+	 * @param Database $dbw
+	 * @param string $table
+	 */
+	static public function convertToInnoDB(
+		Database $dbw,
+		$table
 	) {
-		$dbName = $upd->getDBName();
-		$dbw = $upd->getDatabase();
-		$tables = self::getTablesWithoutPrimaryKeys( $dbw, $dbName );
-		if ( count( $tables ) ) {
-			$upd->output( "Updating tables to have a primary key...\n" );
-			foreach ( array_keys( $tables ) as $table ) {
-				self::addPrimaryKey( $upd, $table, $tables );
-			}
-		}
+		return $dbw->query( "ALTER TABLE {$table} ENGINE InnoDB" );
 	}
 }
