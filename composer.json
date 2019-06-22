@@ -18,6 +18,7 @@
 			"role": "Creator"
 		}
 	],
+	"minimum-stability": "stable",
 	"support": {
 		"issues": "https://github.com/MWStake/PerconaDB/issues",
 		"source": "https://github.com/MWStake/PerconaDB"
