@@ -28,11 +28,13 @@
 		"composer/installers": "1.*,>=1.0.1"
 	},
 	"require-dev": {
-		"squizlabs/php_codesniffer": "~2.1",
-		"phpmd/phpmd": "~2.1"
+		"mediawiki/mediawiki-codesniffer": "26.0.0",
+		"phpmd/phpmd": "~2.1",
+		"vimeo/psalm": "^3.4"
 	},
 	"autoload": {
 		"files" : [
+			"PerconaUpdater.php",
 			"PerconaInstaller.php",
 			"DatabasePercona.php"
 		],
@@ -49,13 +51,17 @@
 		"unit": "composer phpunit -- --testsuite semantic-scribunto-unit",
 		"integration": "composer phpunit -- --testsuite semantic-scribunto-integration",
 		"cs": [
-			"vendor/bin/phpcs src/* tests/* --standard=phpcs.xml --extensions=php -sp",
-			"vendor/bin/phpmd src/,tests/ text phpmd.xml"
+			"vendor/bin/phpcs src/* *.php -sp",
+			"vendor/bin/phpmd src/ text phpmd.xml"
 		],
 		"ci": [
 			"composer validate --no-interaction",
 			"composer phpunit",
 			"composer cs"
+		],
+		"fix": [
+			"vendor/bin/phpcbf src/* *.php",
+			"vendor/bin/phpmd src/ text phpmd.xml"
 		]
 	}
 }

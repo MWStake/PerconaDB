@@ -20,5 +20,5 @@
  * @author Mark A. Hershberger <mah@nichework.com>
  */
 
+require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
 class_alias( "MediaWiki\\Extension\\PerconaDB\\Database", "DatabasePercona" );
-

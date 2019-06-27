@@ -23,8 +23,8 @@ namespace MediaWiki\Extension\PerconaDB;
 
 use MysqlInstaller;
 use Status;
-use Wikimedia\RDBMS\Database;
-use Wikimedia\RDBMS\DBConnectionError;
+use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DBConnectionError;
 
 class Installer extends MysqlInstaller {
 	public $supportedEngines = [ 'InnoDB' ];
@@ -61,8 +61,8 @@ class Installer extends MysqlInstaller {
 	}
 
 		/**
-	 * @return string
-	 */
+	  * @return string
+	  */
 	public function getSettingsForm() {
 		if ( $this->canCreateAccounts() ) {
 			$noCreateMsg = false;

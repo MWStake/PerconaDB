@@ -31,7 +31,7 @@ class Hook {
 	 * @param DatabaseUpdater $upd
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates
 	 */
-	static public function onLoadExtensionSchemaUpdates(
+	public static function onLoadExtensionSchemaUpdates(
 		DatabaseUpdater $upd
 	) {
 		$upd->addExtensionUpdate( [ __CLASS__ . '::ensureNoMyISAMTables' ] );
@@ -43,7 +43,7 @@ class Hook {
 	 *
 	 * @param DatabaseUpdater $upd
 	 */
-	static public function ensurePrimaryKeys(
+	public static function ensurePrimaryKeys(
 		DatabaseUpdater $upd
 	) {
 		$pkCreator = new PrimaryKeyCreator( $upd );
@@ -55,7 +55,7 @@ class Hook {
 	 *
 	 * @param DatabaseUpdater $upd
 	 */
-	static public function ensureNoMyISAMTables(
+	public static function ensureNoMyISAMTables(
 		DatabaseUpdater $upd
 	) {
 		$dbw = $upd->getDB();
@@ -75,7 +75,7 @@ class Hook {
 	 * @param Database $dbw
 	 * @return array[]
 	 */
-	static public function getMyISAMTables(
+	public static function getMyISAMTables(
 		Database $dbw
 	) {
 		$dbName = $dbw->addQuotes( $dbw->getDBName() );
@@ -101,7 +101,7 @@ class Hook {
 	 * @param Database $dbw
 	 * @param string $table
 	 */
-	static public function convertToInnoDB(
+	public static function convertToInnoDB(
 		Database $dbw,
 		$table
 	) {

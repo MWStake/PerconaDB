@@ -23,4 +23,5 @@ namespace MediaWiki\Extension\PerconaDB;
 
 use FatalError;
 
-class Exception extends FatalError {}
+class Exception extends FatalError {
+}

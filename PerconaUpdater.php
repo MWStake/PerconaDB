@@ -1,7 +1,7 @@
 <?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
 # vi:shiftwidth=4 tabstop=4 textwidth=76
 
-/*
+/**
  * Copyright (C) 2019  NicheWork, LLC
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,4 +20,5 @@
  * @author Mark A. Hershberger <mah@nichework.com>
  */
 
+require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
 class_alias( "MysqlUpdater", "PerconaUpdater" );
