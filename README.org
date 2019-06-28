@@ -1,7 +1,7 @@
-* A Percona Database Driver for Percona XtraDB
+* Percona XtraDB on MediaWiki
 
-You must set the environment variable MW_INSTALL_PATH to your mediawiki root to use this extension.
+You must set the environment variable =MW_INSTALL_PATH= to your mediawiki root to use this extension.
 
-In order to install on a Percona DB this extension tells composer how to autoload it.  This is necessary so that when you specify “percona” as the db type via install.php, it can find the right db driver.
+In order to install on a Percona DB this extension tells [[https://getcomposer.org/][composer]] how to autoload it.  This is necessary so that when you specify “percona” as the db type during installation, it can find the right db driver.  It also allows MediaWiki to use [[https://www.mediawiki.org/wiki/Manual:$wgDBtype][=$wgDBtype]]= to find the provided =DatabasePercona= class.
 
-As a result, composer's autoloader has to be told about the MediaWiki autoloader.
+Because of this bootstrapping, composer's autoloader needs to be able to use MediaWiki's autoloader and we make it available by loading [[https://www.mediawiki.org/wiki/Manual:AutoLoader.php][=$MW_INSTALL_PATH/includes/AutoLoader.php=]].

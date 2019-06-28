@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+		]
+	},
+	"config-type-percona": "{{optional}}",
+	"config-dbsupport-percona": "Used in:\n* {{msg-mw|config-support-info}}\n{{Related|Config-dbsupport}}",
+	"config-header-percona": "Header for Percona XtraDB database settings in the MediaWiki installer.",
+	"config-percona-engine": "Field label for Percona storage engine in the MediaWiki installer.",
+	"config-percona-innodb": "Option for the Percona storage engine in the MediaWiki installer.",
+	"config-percona-engine-help": "Help text in MediaWiki installer with advice for picking a MySQL storage engine."
+}

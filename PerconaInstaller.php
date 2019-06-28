@@ -21,4 +21,8 @@
  */
 
 require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
+global $wgMessagesDirs;
+Installer::addDBType( "percona" );
+$wgMessagesDirs['PerconaInstaller'] = __DIR__ . '/i18n';
+
 class_alias( "MediaWiki\\Extension\\PerconaDB\\Installer", "PerconaInstaller" );

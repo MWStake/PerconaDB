@@ -52,4 +52,9 @@ class Database extends DatabaseMysqli {
 	protected function isInsertSelectSafe( array $insertOptions, array $selectOptions ) {
 		return BaseDB::isInsertSelectSafe( $insertOptions, $selectOptions );
 	}
+
+	public function getSoftwareLink() {
+		return '[https://www.percona.com/software/mysql-database/percona-xtradb-cluster '
+			. 'Percona XtraDB Cluster]';
+	}
 }

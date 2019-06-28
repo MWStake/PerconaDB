@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"perconadb-desc": "An extension to allow MediaWiki to use a Percona XtraDB Cluster.",
+	"config-type-percona": "Percona XtraDB Cluster",
+	"config-dbsupport-percona": "* [https://www.percona.com/software/mysql-database/percona-xtradb-cluster Percona XtraDB Cluster] is a MySQL-like database cluster.",
+	"config-header-percona": "Percona XtraDB Cluster settings",
+	"config-percona-engine": "The only choice for now is InnoDB",
+	"config-percona-innodb": "This is your only choice",
+	"config-percona-engine-help": "What do you need help with?"
+}
+
