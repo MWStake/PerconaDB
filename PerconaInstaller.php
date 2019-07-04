@@ -20,9 +20,11 @@
  * @author Mark A. Hershberger <mah@nichework.com>
  */
 
-require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
-global $wgMessagesDirs;
-Installer::addDBType( "percona" );
-$wgMessagesDirs['PerconaInstaller'] = __DIR__ . '/i18n';
+if ( defined( 'MEDIAWIKI_INSTALL' ) ) {
+	require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
+	global $wgMessagesDirs;
+	Installer::addDBType( "percona" );
+	$wgMessagesDirs['PerconaInstaller'] = __DIR__ . '/i18n';
+}
 
 class_alias( "MediaWiki\\Extension\\PerconaDB\\Installer", "PerconaInstaller" );
