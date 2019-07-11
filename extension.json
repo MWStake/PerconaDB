@@ -8,15 +8,17 @@
 	"license-name": "GPL-3.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.31.0"
-	},
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\PerconaDB\\": "src/"
+		"MediaWiki": ">= 1.27.0"
 	},
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\PerconaDB\\Hook::onLoadExtensionSchemaUpdates"
 	},
 	"AutoloadClasses": {
+		"MediaWiki\\Extension\\PerconaDB\\Exception": "src/Exception.php",
+		"MediaWiki\\Extension\\PerconaDB\\Hook": "src/Hook.php",
+		"MediaWiki\\Extension\\PerconaDB\\Installer": "src/Installer.php",
+		"MediaWiki\\Extension\\PerconaDB\\PrimaryKeyCreator": "src/PrimaryKeyCreator.php",
+		"MediaWiki\\Extension\\PerconaDB\\Database": "src/Database.php",
 		"DatabasePercona": "DatabasePercona.php",
 		"PerconaInstaller": "PerconaInstaller.php",
 		"PerconaUpdater": "PerconaUpdater.php"
@@ -26,5 +28,5 @@
 			"i18n"
 		]
 	},
-	"manifest_version": 2
+	"manifest_version": 1
 }
