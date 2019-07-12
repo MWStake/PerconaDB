@@ -21,9 +21,9 @@
  */
 
 if ( defined( 'MEDIAWIKI_INSTALL' ) ) {
-	require_once getenv( "MW_INSTALL_PATH" ) . "/includes/AutoLoader.php";
-	global $wgMessagesDirs;
+	require_once getenv( "MW_INSTALL_PATH" ) . "/includes/installer/Installer.php";
 	Installer::addDBType( "percona" );
+	global $wgMessagesDirs;
 	$wgMessagesDirs['PerconaInstaller'] = __DIR__ . '/i18n';
 }
 
