@@ -22,13 +22,13 @@
 namespace MediaWiki\Extension\PerconaDB;
 
 use DatabaseUpdater;
-use Database;
 
 class Hook {
 	/**
 	 * Fired when MediaWiki is updated to allow extensions to update the database
 	 *
 	 * @param DatabaseUpdater $upd
+	 * @return void
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates
 	 */
 	static public function onLoadExtensionSchemaUpdates(
@@ -42,6 +42,7 @@ class Hook {
 	 * Ensure that all tables have primary keys.
 	 *
 	 * @param DatabaseUpdater $upd
+	 * @return void
 	 */
 	static public function ensurePrimaryKeys(
 		DatabaseUpdater $upd
@@ -54,6 +55,7 @@ class Hook {
 	 * Ensure that there are no tables using MyISAM.
 	 *
 	 * @param DatabaseUpdater $upd
+	 * @return void
 	 */
 	static public function ensureNoMyISAMTables(
 		DatabaseUpdater $upd
@@ -83,10 +85,13 @@ class Hook {
 		$ret = [];
 		$res = $dbw->query(
 			"SELECT table_name
-               FROM information_schema.tables
-              WHERE engine='MyISAM'
-                AND table_schema=$dbName"
+			   FROM information_schema.tables
+			  WHERE engine='MyISAM'
+				AND table_schema=$dbName"
 		);
+		if ( is_bool( $res ) ) {
+			return $ret;
+		}
 		if ( $res->numRows() ) {
 			foreach ( $res as $row ) {
 				$ret[] = $dbw->addIdentifierQuotes( $row->table_name );
