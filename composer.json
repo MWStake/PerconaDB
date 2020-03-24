@@ -34,7 +34,6 @@
 	},
 	"autoload": {
 		"files" : [
-			"PerconaUpdater.php",
 			"PerconaInstaller.php",
 			"DatabasePercona.php"
 		],
