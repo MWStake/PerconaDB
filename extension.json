@@ -16,11 +16,6 @@
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\PerconaDB\\Hook::onLoadExtensionSchemaUpdates"
 	},
-	"AutoloadClasses": {
-		"DatabasePercona": "DatabasePercona.php",
-		"PerconaInstaller": "PerconaInstaller.php",
-		"PerconaUpdater": "PerconaUpdater.php"
-	},
 	"MessagesDirs": {
 		"PerconaDB": [
 			"i18n"
