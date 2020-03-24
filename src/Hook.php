@@ -1,5 +1,4 @@
-<?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
-# vi:shiftwidth=4 tabstop=4 textwidth=76
+<?php
 
 /**
  * Copyright (C) 2019  NicheWork, LLC
@@ -55,9 +54,7 @@ class Hook {
 	 *
 	 * @param DatabaseUpdater $upd
 	 */
-	public static function ensureNoMyISAMTables(
-		DatabaseUpdater $upd
-	) {
+	public static function ensureNoMyISAMTables( DatabaseUpdater $upd ) {
 		$dbw = $upd->getDB();
 		$tables = self::getMyISAMTables( $dbw );
 		if ( count( $tables ) ) {
@@ -72,12 +69,10 @@ class Hook {
 	/**
 	 * Return a list of tables that use the MyISAM engine.
 	 *
-	 * @param Database $dbw
+	 * @param $dbw
 	 * @return array[]
 	 */
-	public static function getMyISAMTables(
-		Database $dbw
-	) {
+	public static function getMyISAMTables( $dbw ) {
 		$dbName = $dbw->addQuotes( $dbw->getDBName() );
 
 		$ret = [];

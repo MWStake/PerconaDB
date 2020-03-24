@@ -1,5 +1,4 @@
-<?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
-# vi:shiftwidth=4 tabstop=4 textwidth=76
+<?php
 
 /**
  * Copyright (C) 2019  NicheWork, LLC
@@ -111,7 +110,14 @@ class PrimaryKeyCreator {
 	 * @param string $table
 	 */
 	protected function getSQLToAddPrimaryKey( $table ) {
+		global $wgDBprefix;
 		$sql = false;
+		$prefLen = strlen( $wgDBprefix );
+		$origTable = $table;
+
+		if ( $prefLen > 0 && substr( $table, 0, $prefLen ) === $wgDBprefix ) {
+			$table = substr( $table, $prefLen );
+		}
 
 		$sqlMap = [
 			'oldimage' => '( oi_sha1, oi_timestamp )',
@@ -121,12 +127,15 @@ class PrimaryKeyCreator {
 				. 'ADD COLUMN qcc_id int(10) UNSIGNED NOT NULL '
 				. 'AUTO_INCREMENT PRIMARY KEY'
 			],
-			'user_newtalk' => '( user_id, user_ip, user_last_timestamp )'
+			'user_newtalk' => '( user_id, user_ip, user_last_timestamp )',
+			'flow_topic_list' => '( topic_id )',
+			# smw
+			'smw_di_wikipage' => 'p_id,s_id,o_id',
 		];
 		if ( isset( $sqlMap[$table] ) && !is_array( $sqlMap[$table] ) ) {
 			$sql = sprintf(
 				"ALTER TABLE %s ADD PRIMARY KEY %s",
-				$this->dbw->addIdentifierQuotes( $table ), $sqlMap[$table]
+				$this->dbw->addIdentifierQuotes( $origTable ), $sqlMap[$table]
 			);
 		} elseif ( isset( $sqlMap[$table] ) && is_array( $sqlMap[$table] ) ) {
 			$sql = array_shift( $sqlMap[$table] );

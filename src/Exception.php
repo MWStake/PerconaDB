@@ -1,5 +1,4 @@
-<?php #-*-tab-width: 4; fill-column: 76; indent-tabs-mode: t -*-
-# vi:shiftwidth=4 tabstop=4 textwidth=76
+<?php
 
 /**
  * Copyright (C) 2019  NicheWork, LLC
