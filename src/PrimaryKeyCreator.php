@@ -46,7 +46,7 @@ class PrimaryKeyCreator {
 	/**
 	 * Take care of everything that needs to be done to give all the tables a primary key.
 	 */
-	public function execute() {
+	public function execute() :void {
 		if ( $this->hasTablesWithoutPrimaryKeys() ) {
 			$this->addPrimaryKeys();
 		}
@@ -55,7 +55,7 @@ class PrimaryKeyCreator {
 	/**
 	 * Add primary keys to tables that need them.
 	 */
-	protected function addPrimaryKeys() {
+	protected function addPrimaryKeys() :void {
 		$this->upd->output( "Updating tables to have a primary key...\n" );
 		foreach ( array_keys( $this->tableMap ) as $table ) {
 			$this->upd->output( "...$table\n" );
@@ -67,11 +67,8 @@ class PrimaryKeyCreator {
 	 * Store an array of tables without a primary key and the type of key
 	 * (UNI, MUL) used for each column.  This information is used later to
 	 * construct a primary key. Returns true if any are found.
-	 *
-	 * @param Database $dbw
-	 * @return bool
 	 */
-	protected function hasTablesWithoutPrimaryKeys() {
+	protected function hasTablesWithoutPrimaryKeys() :bool {
 		$res = $this->dbw->query(
 			"SELECT DISTINCT table_name, column_key, column_name
 						FROM information_schema.columns c1
@@ -93,10 +90,8 @@ class PrimaryKeyCreator {
 
 	/**
 	 * Add a primary key to the table that doesn't currently have one.
-	 *
-	 * @param string $table
 	 */
-	protected function addPrimaryKey( $table ) {
+	protected function addPrimaryKey( string $table ) :void {
 		$sql = $this->getSQLToAddPrimaryKey( $table );
 		if ( $sql === false ) {
 			throw new Exception( "Could not create a primary key for the $table.\n" );
@@ -106,10 +101,8 @@ class PrimaryKeyCreator {
 
 	/**
 	 * Get the SQL to add a primary key.
-	 *
-	 * @param string $table
 	 */
-	protected function getSQLToAddPrimaryKey( $table ) {
+	protected function getSQLToAddPrimaryKey( string $table ) :string {
 		global $wgDBprefix;
 		$sql = false;
 		$prefLen = strlen( $wgDBprefix );
@@ -120,29 +113,90 @@ class PrimaryKeyCreator {
 		}
 
 		$sqlMap = [
-			'oldimage' => '( oi_sha1, oi_timestamp )',
-			'querycache' => '( qc_namespace, qc_title )',
+			'oldimage' => [
+				'index' => '( oi_sha1, oi_timestamp )',
+				'column' => [ 'oi_sha1', 'oi_timestamp' ]
+			],
+			'querycache' => [
+				'index' => '( qc_namespace, qc_title )',
+				'column' => [ 'qc_namespace', 'qc_title' ]
+			],
 			'querycachetwo' => [
 				'ALTER TABLE querycachetwo '
 				. 'ADD COLUMN qcc_id int(10) UNSIGNED NOT NULL '
 				. 'AUTO_INCREMENT PRIMARY KEY'
 			],
-			'user_newtalk' => '( user_id, user_ip, user_last_timestamp )',
-			'flow_topic_list' => '( topic_id )',
+			'user_newtalk' => [
+				'index' => '( user_id, user_ip, user_last_timestamp )',
+				'column' => [ 'user_id', 'user_ip', 'user_last_timestamp' ]
+			],
+			'flow_topic_list' => [
+				'index' => '( topic_id )',
+				'column' => [ 'topic_id' ]
+			],
 			# smw
-			'smw_di_wikipage' => 'p_id,s_id,o_id',
+			'smw_di_wikipage' => [
+				'index' => '( p_id, s_id, o_id )',
+				'column' => [ 'p_id', 's_id', 'o_id' ]
+			]
 		];
-		if ( isset( $sqlMap[$table] ) && !is_array( $sqlMap[$table] ) ) {
-			$sql = sprintf(
-				"ALTER TABLE %s ADD PRIMARY KEY %s",
-				$this->dbw->addIdentifierQuotes( $origTable ), $sqlMap[$table]
-			);
-		} elseif ( isset( $sqlMap[$table] ) && is_array( $sqlMap[$table] ) ) {
-			$sql = array_shift( $sqlMap[$table] );
+		if ( isset( $sqlMap[$table] ) ) {
+			if ( isset( $sqlMap[$table]['index'] ) && isset( $sqlMap[$table]['column'] ) ) {
+				$sql = $this->createSQL( $origTable, $sqlMap[$table] );
+			} elseif ( isset( $sqlMap[$table] ) && count( $sqlMap[$table] ) === 1 ) {
+				$sql = array_shift( $sqlMap[$table] );
+			} else {
+				$this->upd->output( "Entry for '$table' is not correctly formed!" );
+				return false;
+			}
 		}
 		if ( $sql ) {
 			$sql .= " COMMENT 'added by PrimaryKeyCreator'";
 		}
 		return $sql;
+	}
+
+	/**
+	 * Produce an SQL query while ensuring there are no duplicates
+	 */
+	protected function createSQL( string $table, array $map ) {
+		$this->upd->output(
+			"Verify that $table has no dupes for the the index: "
+			. $map['index'] . "...\n"
+		);
+
+		# create temporary table with counts for each duplicate columns
+		$columns = implode( ",", $map['column'] );
+		$tableName = $this->dbw->addIdentifierQuotes( "temp$table" );
+		$sql =<<<EOB
+CREATE TEMPORARY TABLE $tableName (
+     SELECT count(*) AS _count, $columns
+       FROM $table
+   GROUP BY $columns
+);
+EOB;
+		$this->dbw->query( $sql );
+		$res = $this->dbw->query( "SELECT * FROM $tableName WHERE _count > 1 ORDER BY _count DESC" );
+		foreach ( $res as $row ) {
+			$dupe = array_map(
+				function( $col ) use ( $row ) {
+					return $this->dbw->addIdentifierQuotes( $col )
+						. " = " . $this->dbw->addQuotes( $row->$col );
+				},
+				array_filter(
+					array_keys( get_object_vars( $row ) ),
+					function( $key ) {
+						return !is_integer( $key ) && $key !== '_count';
+					}
+				)
+			);
+			$this->upd->output( "... Removing " . implode( ', ', $dupe ) . "\n" );
+			$this->dbw->query( "DELETE FROM $table WHERE " . implode( " AND ", $dupe ) );
+		}
+		$this->dbw->query( "DROP TABLE $tableName" );
+		return sprintf(
+			"ALTER TABLE %s ADD PRIMARY KEY %s",
+			$this->dbw->addIdentifierQuotes( $table ), $map['index']
+		);
 	}
 }
