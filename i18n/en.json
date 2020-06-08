@@ -8,6 +8,7 @@
 	"config-header-percona": "Percona XtraDB Cluster settings",
 	"config-percona-engine": "The only choice for now is InnoDB",
 	"config-percona-innodb": "This is your only choice",
-	"config-percona-engine-help": "What do you need help with?"
+	"config-percona-engine-help": "What do you need help with?",
+	"config-header-PerconaDB": "Percona DB extension"
 }
 

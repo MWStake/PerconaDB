@@ -6,7 +6,7 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:PerconaDB",
 	"descriptionmsg": "perconadb-desc",
 	"license-name": "GPL-3.0-or-later",
-	"type": "other",
+	"type": "dbtype",
 	"requires": {
 		"MediaWiki": ">= 1.31.0"
 	},
@@ -15,6 +15,13 @@
 	},
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\PerconaDB\\Hook::onLoadExtensionSchemaUpdates"
+	},
+	"Installer": {
+		"DbTypes": {
+			"PerconaDB": {
+				"DbInstaller": "MediaWiki\\Extension\\PerconaDB\\Installer"
+			}
+		}
 	},
 	"MessagesDirs": {
 		"PerconaDB": [
