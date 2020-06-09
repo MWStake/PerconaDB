@@ -32,7 +32,7 @@ class Installer extends MysqlInstaller {
 	 * @return string
 	 */
 	public function getReadableName() {
-		return 'Percoda DB';
+		return 'Percona DB';
 	}
 
 	/**
