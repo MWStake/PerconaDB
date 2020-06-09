@@ -102,4 +102,25 @@ class Hook {
 	) {
 		return $dbw->query( "ALTER TABLE {$table} ENGINE InnoDB" );
 	}
+
+    public static function onSMWBeforeCreateTablesComplete(
+		array $tables, $messageReporter
+	) {
+		$primaryKeys = PrimaryKeyCreator::getSMWIndexMap();
+
+		/**
+		 * @var \Onoi\MessageReporter\MessageReporter
+		 */
+		$messageReporter->reportMessage( "Setting primary indices.\n" );
+		/**
+		 * @var \SMW\SQLStore\TableBuilder\Table[]
+		 */
+		foreach ( $tables as $table ) {
+			if ( isset( $primaryKeys[$table->getName()] ) ) {
+				$table->setPrimaryKey( $primaryKeys[$table->getName()] );
+			}
+		}
+		$messageReporter->reportMessage( "\ndone.\n" );
+	}
+
 }

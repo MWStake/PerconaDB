@@ -14,10 +14,15 @@
 		"MediaWiki\\Extension\\PerconaDB\\": "src/"
 	},
 	"AutoloadClasses": {
-		"DatabasePercona": "DatabasePercona.php"
+		"DatabasePercona": "DatabasePercona.php",
+		"PerconaInstaller": "PerconaInstaller.php"
 	},
 	"Hooks": {
-		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\PerconaDB\\Hook::onLoadExtensionSchemaUpdates"
+		"SMW::SQLStore::Installer::BeforeCreateTablesComplete":
+		"MediaWiki\\Extension\\PerconaDB\\Hook::onSMWBeforeCreateTablesComplete",
+
+		"LoadExtensionSchemaUpdates":
+		"MediaWiki\\Extension\\PerconaDB\\Hook::onLoadExtensionSchemaUpdates"
 	},
 	"Installer": {
 		"DbTypes": {

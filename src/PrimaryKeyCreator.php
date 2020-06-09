@@ -99,6 +99,58 @@ class PrimaryKeyCreator {
 		$this->dbw->query( $sql );
 	}
 
+	public static function getSMWIndexMap() :array {
+		return [
+			'smw_di_time'     => 'p_id,s_id,o_serialized',
+			'smw_di_blob'     => 'p_id,s_id,o_hash',
+			'smw_di_bool'     => 'p_id,s_id,o_value',
+			'smw_di_uri'      => 'p_id,s_id,o_serialized',
+			'smw_di_coords'   => 'p_id,s_id,o_serialized',
+			'smw_di_number'   => 'p_id,s_id,o_serialized',
+			'smw_fpt_ask'     => 's_id,o_id',
+			'smw_concept_cache' => 's_id,o_id',
+			'smw_fpt_askpa'	  => 's_id,o_hash',
+			'smw_fpt_askde'   => 's_id,o_serialized',
+			'smw_fpt_askfo'   => 's_id,o_hash',
+			'smw_fpt_askdu'   => 's_id,o_serialized',
+			'smw_fpt_asksi'   => 's_id,o_serialized',
+			'smw_fpt_askst'   => 's_id,o_hash',
+			'smw_fpt_cdat'    => 's_id,o_serialized',
+			'smw_fpt_conc'    => 's_id',
+			'smw_fpt_conv'    => 's_id,o_hash',
+			'smw_fpt_dtitle'  => 's_id,o_hash',
+			'smw_fpt_impo'    => 's_id,o_hash',
+			'smw_fpt_inst'    => 's_id,o_id',
+			'smw_fpt_lcode'   => 's_id,o_hash',
+			'smw_fpt_ledt'    => 's_id,o_id',
+			'smw_fpt_list'    => 's_id,o_hash',
+			'smw_fpt_mdat'    => 's_id,o_serialized',
+			'smw_fpt_media'   => 's_id,o_hash',
+			'smw_fpt_mime'    => 's_id,o_hash',
+			'smw_fpt_newp'    => 's_id,o_value',
+			'smw_fpt_pplb'    => 's_id,o_id',
+			'smw_fpt_prec'    => 's_id,o_serialized',
+			'smw_fpt_pval'    => 's_id,o_hash',
+			'smw_fpt_redi'    => 's_title,s_namespace',
+			'smw_fpt_serv'    => 's_id,o_hash',
+			'smw_fpt_sobj'    => 's_id,o_id',
+			'smw_fpt_subc'    => 's_id,o_id',
+			'smw_fpt_subp'    => 's_id,o_id',
+			'smw_fpt_text'    => 's_id,o_hash',
+			'smw_fpt_type'    => 's_id,o_serialized',
+			'smw_fpt_unit'    => 's_id,o_hash',
+			'smw_fpt_uri'     => 's_id,o_serialized',
+			'smw_query_links' => 's_id,o_id'
+		];
+	}
+
+	protected function createSQLMap( string $table, string $fields ) {
+		return $this->createSQL( $table, [
+			'index' => '(' . $fields . ')',
+			'column' => explode( ",", $fields )
+		] );
+	}
+
 	/**
 	 * Get the SQL to add a primary key.
 	 */
@@ -112,39 +164,43 @@ class PrimaryKeyCreator {
 			$table = substr( $table, $prefLen );
 		}
 
-		$sqlMap = [
-			'oldimage' => [
-				'index' => '( oi_sha1, oi_timestamp )',
-				'column' => [ 'oi_sha1', 'oi_timestamp' ]
-			],
-			'querycache' => [
-				'index' => '( qc_namespace, qc_title )',
-				'column' => [ 'qc_namespace', 'qc_title' ]
-			],
-			'querycachetwo' => [
-				'ALTER TABLE querycachetwo '
-				. 'ADD COLUMN qcc_id int(10) UNSIGNED NOT NULL '
-				. 'AUTO_INCREMENT PRIMARY KEY'
-			],
-			'user_newtalk' => [
-				'index' => '( user_id, user_ip, user_last_timestamp )',
-				'column' => [ 'user_id', 'user_ip', 'user_last_timestamp' ]
-			],
-			'flow_topic_list' => [
-				'index' => '( topic_id )',
-				'column' => [ 'topic_id' ]
-			],
-			# smw
-			'smw_di_wikipage' => [
-				'index' => '( p_id, s_id, o_id )',
-				'column' => [ 'p_id', 's_id', 'o_id' ]
+		$sqlMap = array_merge(
+			self::getSMWIndexMap(),
+			[
+				'oldimage' => [
+					'index' => '( oi_sha1, oi_timestamp )',
+					'column' => [ 'oi_sha1', 'oi_timestamp' ]
+				],
+				'querycache' => [
+					'index' => '( qc_namespace, qc_title )',
+					'column' => [ 'qc_namespace', 'qc_title' ]
+				],
+				'querycachetwo' => [
+					'ALTER TABLE querycachetwo '
+					. 'ADD COLUMN qcc_id int(10) UNSIGNED NOT NULL '
+					. 'AUTO_INCREMENT PRIMARY KEY'
+				],
+				'user_newtalk' => [
+					'index' => '( user_id, user_ip, user_last_timestamp )',
+					'column' => [ 'user_id', 'user_ip', 'user_last_timestamp' ]
+				]
 			]
-		];
+		);
 		if ( isset( $sqlMap[$table] ) ) {
-			if ( isset( $sqlMap[$table]['index'] ) && isset( $sqlMap[$table]['column'] ) ) {
+			if (
+				isset( $sqlMap[$table]['index'] )
+				&& isset( $sqlMap[$table]['column'] )
+			) {
 				$sql = $this->createSQL( $origTable, $sqlMap[$table] );
-			} elseif ( isset( $sqlMap[$table] ) && count( $sqlMap[$table] ) === 1 ) {
+			} elseif (
+				isset( $sqlMap[$table] ) && is_array( $sqlMap[$table] )
+				&& count( $sqlMap[$table] ) === 1
+			) {
 				$sql = array_shift( $sqlMap[$table] );
+			} elseif (
+				isset( $sqlMap[$table] ) && is_string( $sqlMap[$table] )
+			) {
+				$sql = $this->createSQLMap( $origTable, $sqlMap[$table] );
 			} else {
 				$this->upd->output( "Entry for '$table' is not correctly formed!" );
 				return false;
