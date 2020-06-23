@@ -27,7 +27,8 @@
 	"Providers": {
 		"Databases": {
 			"percona": {
-				"Installer": "MediaWiki\\Extension\\PerconaDB\\Installer"
+				"Installer": "MediaWiki\\Extension\\PerconaDB\\Installer",
+				"Updater": "MysqlUpdater"
 			}
 		}
 	},
