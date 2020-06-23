@@ -28,6 +28,7 @@
 		"Databases": {
 			"percona": {
 				"Installer": "MediaWiki\\Extension\\PerconaDB\\Installer",
+				"Driver": "MediaWiki\\Extension\\PerconaDB\\Database",
 				"Updater": "MysqlUpdater"
 			}
 		}
