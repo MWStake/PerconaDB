@@ -3,6 +3,7 @@
 		"authors": [
 		]
 	},
+	"perconadb-desc": "{{desc|name=PerconaDB|url=https://www.mediawiki.org/wiki/Extension:PerconaDB}}",
 	"config-type-percona": "{{optional}}",
 	"config-dbsupport-percona": "Used in:\n* {{msg-mw|config-support-info}}\n{{Related|Config-dbsupport}}",
 	"config-header-percona": "Header for Percona XtraDB database settings in the MediaWiki installer.",
