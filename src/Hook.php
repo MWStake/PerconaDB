@@ -21,7 +21,7 @@
 namespace MediaWiki\Extension\PerconaDB;
 
 use DatabaseUpdater;
-use Database;
+use IDatabase;
 
 class Hook {
 	/**
@@ -84,7 +84,9 @@ class Hook {
 		);
 		if ( $res->numRows() ) {
 			foreach ( $res as $row ) {
-				$ret[] = $dbw->addIdentifierQuotes( $row->table_name );
+				if ( $row->table_name ) {
+					$ret[] = $dbw->addIdentifierQuotes( $row->table_name );
+				}
 			}
 		}
 		return $ret;
@@ -93,11 +95,11 @@ class Hook {
 	/**
 	 * Convert a table to use the InnoDB engine.
 	 *
-	 * @param Database $dbw
+	 * @param IDatabase $dbw
 	 * @param string $table
 	 */
 	public static function convertToInnoDB(
-		Database $dbw,
+		IDatabase $dbw,
 		$table
 	) {
 		return $dbw->query( "ALTER TABLE {$table} ENGINE InnoDB" );
