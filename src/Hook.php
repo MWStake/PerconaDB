@@ -21,11 +21,12 @@
 namespace MediaWiki\Extension\PerconaDB;
 
 use DatabaseUpdater;
-use Database;
+use IDatabase;
 
 class Hook {
 	/**
-	 * Fired when MediaWiki is updated to allow extensions to update the database
+	 * Fired when MediaWiki is updated to allow extensions to update the
+	 * database
 	 *
 	 * @param DatabaseUpdater $upd
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates
@@ -72,7 +73,7 @@ class Hook {
 	 * @param $dbw
 	 * @return array[]
 	 */
-	public static function getMyISAMTables( $dbw ) {
+	public static function getMyISAMTables( IDatabase $dbw ) {
 		$dbName = $dbw->addQuotes( $dbw->getDBName() );
 
 		$ret = [];
@@ -92,14 +93,8 @@ class Hook {
 
 	/**
 	 * Convert a table to use the InnoDB engine.
-	 *
-	 * @param Database $dbw
-	 * @param string $table
 	 */
-	public static function convertToInnoDB(
-		Database $dbw,
-		$table
-	) {
+	public static function convertToInnoDB( IDatabase $dbw, string $table ) {
 		return $dbw->query( "ALTER TABLE {$table} ENGINE InnoDB" );
 	}
 
@@ -122,5 +117,4 @@ class Hook {
 		}
 		$messageReporter->reportMessage( "\ndone.\n" );
 	}
-
 }
