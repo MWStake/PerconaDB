@@ -33,10 +33,6 @@
 		"vimeo/psalm": "^3.4"
 	},
 	"autoload": {
-		"files" : [
-			"PerconaInstaller.php",
-			"DatabasePercona.php"
-		],
 		"psr-4": {
 			"MediaWiki\\Extension\\PerconaDB\\": "src/"
 		}
