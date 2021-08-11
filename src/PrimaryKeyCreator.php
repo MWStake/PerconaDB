@@ -247,7 +247,9 @@ EOB;
 				)
 			);
 			$this->upd->output( "... Removing " . implode( ', ', $dupe ) . "\n" );
+			$this->dbw->query( "SET GLOBAL pxc_strict_mode=PERMISSIVE" );
 			$this->dbw->query( "DELETE FROM $table WHERE " . implode( " AND ", $dupe ) );
+			$this->dbw->query( "SET GLOBAL pxc_strict_mode=ENFORCING" );
 		}
 		$this->dbw->query( "DROP TABLE $tableName" );
 		return sprintf(
