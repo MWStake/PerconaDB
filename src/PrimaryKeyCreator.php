@@ -20,15 +20,21 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
-use DatabaseUpdater;
 use Database;
+use DatabaseUpdater;
 
 class PrimaryKeyCreator {
+	/** @var Database */
 	protected $dbw;
+	/** @var DatabaseUpdater */
 	protected $upd;
+	/** @var string */
 	protected $dbName;
+	/** @var string */
 	protected $quotedDBName;
+	/** @var string */
 	protected $idQuotedDBName;
+	/** @var string[][][] */
 	protected $tableMap;
 
 	/**
@@ -46,7 +52,7 @@ class PrimaryKeyCreator {
 	/**
 	 * Take care of everything that needs to be done to give all the tables a primary key.
 	 */
-	public function execute() :void {
+	public function execute(): void {
 		if ( $this->hasTablesWithoutPrimaryKeys() ) {
 			$this->addPrimaryKeys();
 		}
@@ -55,7 +61,7 @@ class PrimaryKeyCreator {
 	/**
 	 * Add primary keys to tables that need them.
 	 */
-	protected function addPrimaryKeys() :void {
+	protected function addPrimaryKeys(): void {
 		$this->upd->output( "Updating tables to have a primary key...\n" );
 		foreach ( array_keys( $this->tableMap ) as $table ) {
 			$this->upd->output( "...$table\n" );
@@ -67,8 +73,9 @@ class PrimaryKeyCreator {
 	 * Store an array of tables without a primary key and the type of key
 	 * (UNI, MUL) used for each column.  This information is used later to
 	 * construct a primary key. Returns true if any are found.
+	 * @return bool
 	 */
-	protected function hasTablesWithoutPrimaryKeys() :bool {
+	protected function hasTablesWithoutPrimaryKeys(): bool {
 		$res = $this->dbw->query(
 			"SELECT DISTINCT table_name, column_key, column_name
 						FROM information_schema.columns c1
@@ -90,8 +97,9 @@ class PrimaryKeyCreator {
 
 	/**
 	 * Add a primary key to the table that doesn't currently have one.
+	 * @param string $table
 	 */
-	protected function addPrimaryKey( string $table ) :void {
+	protected function addPrimaryKey( string $table ): void {
 		$sql = $this->getSQLToAddPrimaryKey( $table );
 		if ( $sql === false ) {
 			throw new Exception( "Could not create a primary key for the $table.\n" );
@@ -99,7 +107,7 @@ class PrimaryKeyCreator {
 		$this->dbw->query( $sql );
 	}
 
-	public static function getSMWIndexMap() :array {
+	public static function getSMWIndexMap(): array {
 		return [
 			'smw_di_time'     => 'p_id,s_id,o_serialized',
 			'smw_di_blob'     => 'p_id,s_id,o_hash',
@@ -153,8 +161,10 @@ class PrimaryKeyCreator {
 
 	/**
 	 * Get the SQL to add a primary key.
+	 * @param string $table
+	 * @return string
 	 */
-	protected function getSQLToAddPrimaryKey( string $table ) :string {
+	protected function getSQLToAddPrimaryKey( string $table ): string {
 		global $wgDBprefix;
 		$sql = false;
 		$prefLen = strlen( $wgDBprefix );
@@ -214,6 +224,9 @@ class PrimaryKeyCreator {
 
 	/**
 	 * Produce an SQL query while ensuring there are no duplicates
+	 * @param string $table
+	 * @param string[] $map
+	 * @return string
 	 */
 	protected function createSQL( string $table, array $map ) {
 		$this->upd->output(
@@ -224,7 +237,7 @@ class PrimaryKeyCreator {
 		# create temporary table with counts for each duplicate columns
 		$columns = implode( ",", $map['column'] );
 		$tableName = $this->dbw->addIdentifierQuotes( "temp$table" );
-		$sql =<<<EOB
+		$sql = <<<EOB
 CREATE TEMPORARY TABLE $tableName (
      SELECT count(*) AS _count, $columns
        FROM $table
@@ -235,14 +248,14 @@ EOB;
 		$res = $this->dbw->query( "SELECT * FROM $tableName WHERE _count > 1 ORDER BY _count DESC" );
 		foreach ( $res as $row ) {
 			$dupe = array_map(
-				function( $col ) use ( $row ) {
+				function ( $col ) use ( $row ) {
 					return $this->dbw->addIdentifierQuotes( $col )
 						. " = " . $this->dbw->addQuotes( $row->$col );
 				},
 				array_filter(
 					array_keys( get_object_vars( $row ) ),
-					function( $key ) {
-						return !is_integer( $key ) && $key !== '_count';
+					static function ( $key ) {
+						return !is_int( $key ) && $key !== '_count';
 					}
 				)
 			);

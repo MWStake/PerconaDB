@@ -20,8 +20,9 @@
  */
 namespace MediaWiki\Extension\PerconaDB;
 
-use DatabaseUpdater;
 use Database;
+use DatabaseUpdater;
+use IResultWrapper;
 
 class Hook {
 	/**
@@ -69,7 +70,7 @@ class Hook {
 	/**
 	 * Return a list of tables that use the MyISAM engine.
 	 *
-	 * @param $dbw
+	 * @param Database $dbw
 	 * @return array[]
 	 */
 	public static function getMyISAMTables( $dbw ) {
@@ -95,6 +96,7 @@ class Hook {
 	 *
 	 * @param Database $dbw
 	 * @param string $table
+	 * @return IResultWrapper
 	 */
 	public static function convertToInnoDB(
 		Database $dbw,
@@ -103,7 +105,7 @@ class Hook {
 		return $dbw->query( "ALTER TABLE {$table} ENGINE InnoDB" );
 	}
 
-    public static function onSMWBeforeCreateTablesComplete(
+	public static function onSMWBeforeCreateTablesComplete(
 		array $tables, $messageReporter
 	) {
 		$primaryKeys = PrimaryKeyCreator::getSMWIndexMap();

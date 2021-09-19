@@ -26,6 +26,7 @@ use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBConnectionError;
 
 class Installer extends MysqlInstaller {
+	/** @var string[] */
 	public $supportedEngines = [ 'InnoDB' ];
 
 	/**
@@ -60,8 +61,8 @@ class Installer extends MysqlInstaller {
 	}
 
 		/**
-	  * @return string
-	  */
+		 * @return string
+		 */
 	public function getSettingsForm() {
 		if ( $this->canCreateAccounts() ) {
 			$noCreateMsg = false;
