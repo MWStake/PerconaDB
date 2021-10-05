@@ -107,6 +107,7 @@ class PrimaryKeyCreator {
 			'smw_di_uri'      => 'p_id,s_id,o_serialized',
 			'smw_di_coords'   => 'p_id,s_id,o_serialized',
 			'smw_di_number'   => 'p_id,s_id,o_serialized',
+			'smw_di_wikipage' => [ 'addColumn', 'id', 'id_primary' ],
 			'smw_fpt_ask'     => 's_id,o_id',
 			'smw_concept_cache' => 's_id,o_id',
 			'smw_fpt_askpa'	  => 's_id,o_hash',
@@ -140,7 +141,9 @@ class PrimaryKeyCreator {
 			'smw_fpt_type'    => 's_id,o_serialized',
 			'smw_fpt_unit'    => 's_id,o_hash',
 			'smw_fpt_uri'     => 's_id,o_serialized',
-			'smw_query_links' => 's_id,o_id'
+			'smw_query_links' => 's_id,o_id',
+			'smw_prop_stats'  => 'p_id',
+			'smw_ft_search'   => 's_id,p_id,o_sort'
 		];
 	}
 

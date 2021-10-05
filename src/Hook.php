@@ -111,8 +111,12 @@ class Hook {
 		 * @var \SMW\SQLStore\TableBuilder\Table[]
 		 */
 		foreach ( $tables as $table ) {
-			if ( isset( $primaryKeys[$table->getName()] ) ) {
+			$key = $primaryKeys[$table->getName()] ?? false;
+			if ( is_string( $key ) ) {
 				$table->setPrimaryKey( $primaryKeys[$table->getName()] );
+			} elseif ( is_array( $key ) && is_callable( [ $table, $key[0] ] ) ) {
+				$method = array_shift( $key );
+				$table->$method( ...$key );
 			}
 		}
 		$messageReporter->reportMessage( "\ndone.\n" );
