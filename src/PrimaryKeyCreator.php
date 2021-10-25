@@ -143,7 +143,7 @@ class PrimaryKeyCreator {
 			'smw_fpt_uri'     => 's_id,o_serialized',
 			'smw_query_links' => 's_id,o_id',
 			'smw_prop_stats'  => 'p_id',
-			'smw_ft_search'   => 's_id,p_id,o_sort'
+			'smw_ft_search'   => 's_id,p_id'
 		];
 	}
 
