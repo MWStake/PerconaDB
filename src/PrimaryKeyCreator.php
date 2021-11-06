@@ -260,6 +260,7 @@ EOB;
 				)
 			);
 			$this->upd->output( "... Removing " . implode( ', ', $dupe ) . "\n" );
+			// TODO get and store current state
 			$this->dbw->query( "SET GLOBAL pxc_strict_mode=PERMISSIVE" );
 			$this->dbw->query( "DELETE FROM $table WHERE " . implode( " AND ", $dupe ) );
 			$this->dbw->query( "SET GLOBAL pxc_strict_mode=ENFORCING" );
