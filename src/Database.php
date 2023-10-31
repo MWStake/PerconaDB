@@ -21,9 +21,9 @@
 namespace MediaWiki\Extension\PerconaDB;
 
 use Wikimedia\Rdbms\Database as BaseDB;
-use Wikimedia\Rdbms\DatabaseMysqli;
+use Wikimedia\Rdbms\DatabaseMySQL;
 
-class Database extends DatabaseMysqli {
+class Database extends DatabaseMySQL {
 	public function lockIsFree( $lockName, $method ) {
 		return BaseDB::lockIsFree( $lockName, $method );
 	}
